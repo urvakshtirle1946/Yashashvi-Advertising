@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home, Info, Briefcase, Layers, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = ({ scrollToSection }) => {
@@ -13,7 +13,7 @@ const Navbar = ({ scrollToSection }) => {
     const handleScroll = () => {
       const sections = ['home', 'about', 'services', 'portfolio', 'contact'];
       const scrollPosition = window.scrollY + 100;
-      
+
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
@@ -24,17 +24,10 @@ const Navbar = ({ scrollToSection }) => {
           }
         }
       }
-      
+
       setScrolled(window.scrollY > 20);
-      
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 300) {
-        setVisible(false);
-      } else {
-        setVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
+      setVisible(!(window.scrollY > lastScrollY && window.scrollY > 300));
+      setLastScrollY(window.scrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -42,117 +35,95 @@ const Navbar = ({ scrollToSection }) => {
   }, [lastScrollY]);
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#services', label: 'Services' },
-    { href: '#portfolio', label: 'Portfolio' },
-    { href: '#contact', label: 'Contact' }
+    { href: '#home', label: 'Home', icon: <Home size={18} /> },
+    { href: '#about', label: 'About', icon: <Info size={18} /> },
+    { href: '#services', label: 'Services', icon: <Briefcase size={18} /> },
+    { href: '#portfolio', label: 'Portfolio', icon: <Layers size={18} /> },
+    { href: '#contact', label: 'Contact', icon: <Mail size={18} /> }
   ];
-  
+
   const handleNavClick = (e, href) => {
     e.preventDefault();
-    const sectionId = href.substring(1);
-    scrollToSection(sectionId);
+    scrollToSection(href.substring(1));
     setIsOpen(false);
   };
 
   return (
     <motion.nav 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-sm shadow-lg py-2' 
-          : 'bg-transparent py-4'
-      }`}
+      className="fixed w-full z-50 bg-[#FF3D00] shadow-md py-0.5"
       initial={{ y: -100, opacity: 0 }}
-      animate={{ 
-        y: visible ? 0 : -100, 
-        opacity: visible ? 1 : 0 
-      }}
+      animate={{ y: visible ? 0 : -100, opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <motion.div 
-            className="flex-shrink-0 flex items-center"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-          >
-            <img 
-              src="/logo.png"
-              alt="Yashashvi Advertising"
-              className={`transition-all duration-300 ${
-                scrolled ? 'h-12' : 'h-16'
-              } w-auto`}
-            />
-          </motion.div>
-          
-          <div className="hidden md:flex items-center space-x-1">
-            {navLinks.map(({ href, label }, index) => (
-              <motion.a
-                key={href}
-                href={href}
-                onClick={(e) => handleNavClick(e, href)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 relative group ${
-                  activeSection === href.slice(1)
-                    ? 'text-[#FF3D00]'
-                    : scrolled ? 'text-gray-700' : 'text-white'
-                }`}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ y: -2 }}
-              >
-                {label}
-                <motion.span 
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-[#FF3D00] transform origin-left`}
-                  initial={{ scaleX: activeSection === href.slice(1) ? 1 : 0 }}
-                  animate={{ scaleX: activeSection === href.slice(1) ? 1 : 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
-            ))}
-          </div>
-
-          <div className="md:hidden flex items-center">
-            <motion.button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`transition-colors duration-300 ${
-                scrolled ? 'text-gray-700' : 'text-white'
-              } hover:text-[#FF3D00] focus:outline-none`}
-              whileTap={{ scale: 0.9 }}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-14">
+        
+        {/* Compact Logo */}
+        <motion.div 
+          className="flex-shrink-0 bg-[#FF3D00] px-2 py-1 rounded-md"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <img 
+            src="/logo1.png"
+            alt="Yashashvi Advertising"
+            className="h-12 w-auto"
+          />
+        </motion.div>
+        
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-3">
+          {navLinks.map(({ href, label, icon }, index) => (
+            <motion.a
+              key={href}
+              href={href}
+              onClick={(e) => handleNavClick(e, href)}
+              className={`flex items-center gap-1 px-3 py-1 text-sm font-medium text-white transition-all duration-300 ${
+                activeSection === href.slice(1) ? 'font-semibold' : 'opacity-80 hover:opacity-100'
+              }`}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              whileHover={{ y: -2 }}
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
-          </div>
+              {icon} {label}
+            </motion.a>
+          ))}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center">
+          <motion.button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-white hover:text-white/90 focus:outline-none"
+            whileTap={{ scale: 0.9 }}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </motion.button>
         </div>
       </div>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="md:hidden absolute w-full bg-white/95 backdrop-blur-sm shadow-lg"
+            className="md:hidden absolute w-full bg-[#FF3D00] shadow-md"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {navLinks.map(({ href, label }, index) => (
+              {navLinks.map(({ href, label, icon }, index) => (
                 <motion.a
                   key={href}
                   href={href}
                   onClick={(e) => handleNavClick(e, href)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ${
-                    activeSection === href.slice(1)
-                      ? 'text-[#FF3D00] bg-gray-50'
-                      : 'text-gray-700 hover:text-[#FF3D00] hover:bg-gray-50'
-                  }`}
+                  className="flex items-center gap-2 px-3 py-2 text-base font-medium text-white transition-all duration-300 opacity-80 hover:opacity-100"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.2, delay: index * 0.05 }}
                 >
-                  {label}
+                  {icon} {label}
                 </motion.a>
               ))}
             </div>
